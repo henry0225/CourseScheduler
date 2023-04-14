@@ -1,5 +1,8 @@
 import csv
 
+def huh():
+    print('huh')
+
 def openFile(fileName):
     rows = []
     with open(fileName, 'r') as file:
@@ -9,12 +12,14 @@ def openFile(fileName):
             rows.append(row)
     return (rows, header)
 
+
 def writeFile(fileName, rows, header):
     with open(fileName, 'w') as f:
         # using csv.writer method from CSV package
         write = csv.writer(f)
         write.writerow(header)
         write.writerows(rows)
+
 
 def parse(arr, header):
     arr_copy = [header]
@@ -40,6 +45,7 @@ def parse(arr, header):
         result.append(temp)
     return result
 
+
 def change_times(arr):
     result = []
     for row in arr:
@@ -50,6 +56,8 @@ def change_times(arr):
         new_row[5] = times
         result.append(new_row)
     return result
+
+
 def convert_to_164hr(time):
     times = {'M': 0, 'T': 1440, 'W': 2880, 'R': 4320, 'F': 5760, 'S': 5200, 'U': 8640}
     start = [time[0][0:-5], time[0][-4:-2], time[0][-2:]]
@@ -65,6 +73,8 @@ def convert_to_164hr(time):
         end_mins += 720
     print(time, start_mins + times[day], end_mins + times[day])
     return [start_mins + times[day], end_mins + times[day]]
-rows, header = openFile("course_data_fall_2023.csv")[0], openFile("course_data_fall_2023.csv")[1]
-modified = parse(rows, header)
-writeFile("course_data_164hr.csv", modified[1:], header)
+
+
+#rows, header = openFile("course_data_fall_2023.csv")[0], openFile("course_data_fall_2023.csv")[1]
+#modified = parse(rows, header)
+#writeFile("course_data_164hr.csv", modified[1:], header)
