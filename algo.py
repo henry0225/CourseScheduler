@@ -81,5 +81,5 @@ def algo(course_list):
     return res
 course_list = ['COMP 182', 'MATH 355', 'ELEC 220', "custom1"]
 additional_courses = ['custom1', 'custom2', 'custom3']
-print(algo(course_list))
+#print(algo(course_list))
 
