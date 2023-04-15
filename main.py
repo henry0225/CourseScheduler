@@ -4,7 +4,7 @@ from flask import Flask, render_template, request, json, jsonify
 from flask_restful import Resource, Api, reqparse
 from file_parser import openFile
 from flask_cors import CORS
-
+from algo import algo
 app = Flask(__name__)
 CORS(app)
 
@@ -16,9 +16,11 @@ def ping():
 def test():
     if request.method == 'POST':
         data = request.get_json()
-        num1 = int(data['num1'])
-        num2 = int(data['num2'])
-        result = num1 + num2
+        num1 = str(data['num1'])
+        courses = num1.split(',')
+        courses_list = algo(courses)
+        result = [''.join(x) for x in courses_list]
+
         response = {'status': 'OK', 'result': result}
         return jsonify(response)
     else:
