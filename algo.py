@@ -37,7 +37,7 @@ def parse_additional_courses(additional_dict):
         crn_info[course] = additional_dict[course]
     pass
 
-parse_additional_courses(additional_course_info)
+#parse_additional_courses(additional_course_info)
 #print(courses_info, crn_info)
 
 def check_compatible(crns):
@@ -69,14 +69,19 @@ def generate_combinations(courses):
                 combinations.append(new_combination)
 
     return combinations
-def algo(course_list):
-    combinations = generate_combinations(course_list)
+def algo(course_list, additional_courses):
+    parse_additional_courses(additional_courses)
+    courses = copy.deepcopy(course_list)
+    for key in additional_courses:
+        courses.append(key)
+    combinations = generate_combinations(courses)
     res = []
     # for combo in combinations:
     #     temp_combo = []
     #     for crn in combo:
     #         temp_combo.append((crn, original_crn_info[crn]))
     #     res.append(temp_combo)
+    print(combinations)
     return combinations
     return res
 course_list = ['COMP 182', 'MATH 355', 'ELEC 220', "custom1"]
