@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
@@ -42,37 +43,27 @@ function App() {
 
   return (
     <div>
+      <h1>Rice University Course Scheduler</h1>
       <form onSubmit={handleSubmit} style={{ display: 'block' }}>
         <label style={{ display: 'block' }}>
           Courses (ex: COMP 140,COMP 182,COMP 215):
           <input type="text" value={num1} onChange={handleNum1Change} />
         </label>
-        {/* <label style={{ display: 'block' }}>
-          Custom Time Blocks Name:
-          <input type="text" value={num2} onChange={handleNum2Change} />
-        </label>
-        <label style={{ display: 'block' }}>
-          Custom Time Block Start Time:
-          <input type="text" value={num3} onChange={handleNum3Change} />
-        </label>
-        <label style={{ display: 'block' }}>
-          Custom Time Block End Time:
-          <input type="text" value={num4} onChange={handleNum4Change} />
-        </label> */}
+        
         <button type="submit">Submit</button>
       </form>
       {result && (
-  <div>
-    <p>Result:</p>
-    {result.map((innerList, index) => (
-      <ul key={index}>
-        {innerList.map((item, innerIndex) => (
-          <li key={innerIndex}>{item}</li>
-        ))}
-      </ul>
-    ))}
-  </div>
-)}
+        <div>
+          <p>Result:</p>
+          {result.map((innerList, index) => (
+            <ul key={index}>
+              {innerList.map((item, innerIndex) => (
+                <li key={innerIndex}>{item}</li>
+              ))}
+            </ul>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
