@@ -76,15 +76,15 @@ def algo(course_list, additional_courses):
         courses.append(key)
     combinations = generate_combinations(courses)
     res = []
-    # for combo in combinations:
-    #     temp_combo = []
-    #     for crn in combo:
-    #         temp_combo.append((crn, original_crn_info[crn]))
-    #     res.append(temp_combo)
-    print(combinations)
-    return combinations
+    for combo in combinations:
+         temp_combo = []
+         for crn in combo:
+             temp_combo.append((crn, original_crn_info[crn]))
+         res.append(temp_combo)
+    #print(combinations)
+    #return combinations
     return res
 course_list = ['COMP 182', 'MATH 355', 'ELEC 220', "custom1"]
 additional_courses = ['custom1', 'custom2', 'custom3']
-#print(algo(course_list))
+#print(algo(course_list))   
 
