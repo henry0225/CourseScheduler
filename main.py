@@ -17,7 +17,7 @@ def ping():
 def test():
     if request.method == 'POST':
         data = request.get_json()
-        course_info = str(data['num1'])
+        course_info = str(data['courseList'])
         # additional_course_keys = str(data['num2'])
         # additional_course_start_times = str(data['num3'])
         # additional_course_end_times = str(data['num4'])
@@ -31,6 +31,7 @@ def test():
         courses_list = algo(courses, additional_courses={})
         result = courses_list
 
+        print(result, " result")
         response = {'status': 'OK', 'result': result}
         return jsonify(response)
     else:
