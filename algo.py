@@ -5,6 +5,7 @@ import ast
 def parse_csv_file(file_path):
     courses = {}
     crn_info = {}
+    sections_info = {}
     with open(file_path, 'r') as csv_file:
         csv_reader = csv.reader(csv_file)
         for row in csv_reader:
@@ -19,18 +20,18 @@ def parse_csv_file(file_path):
                 # If the course name is not in the courses, add it with an empty dictionary as the value
                 if course_name not in courses:
                     courses[course_name] = []
-
                 # Add the section as key and time slots as value in the inner dictionary
-                courses[course_name].append(section) 
+                courses[course_name].append(section)
+                sections_info[section] = course_name
                 crn_info[section] = time_slots
 
-    return courses, crn_info
+    return courses, crn_info, sections_info
 
 # Example usage
-courses_info, crn_info = parse_csv_file("course_data_164hr.csv")
+courses_info, crn_info, sections_info = parse_csv_file("course_data_164hr.csv")
 original_crn_info = parse_csv_file("course_data_modified.csv")[1]
-additional_course_info = {'custom1': [[1, 2], [10,12]], 'custom2': [[2,3]], 'custom3': [[3,4]]}
-
+#additional_course_info = {'custom1': [[1, 2], [10,12]], 'custom2': [[2,3]], 'custom3': [[3,4]]}
+#print(courses_info)
 def parse_additional_courses(additional_dict):
     for course in additional_dict.keys():
         courses_info[course] = [course]
@@ -79,12 +80,13 @@ def algo(course_list, additional_courses):
     for combo in combinations:
          temp_combo = []
          for crn in combo:
-             temp_combo.append((crn, original_crn_info[crn]))
+             temp = sections_info[crn] + " CRN: " + crn
+             temp_combo.append((temp, original_crn_info[crn]))
          res.append(temp_combo)
     #print(combinations)
     #return combinations
     return res
-course_list = ['COMP 182', 'MATH 355', 'ELEC 220', "custom1"]
-additional_courses = ['custom1', 'custom2', 'custom3']
-#print(algo(course_list))
+course_list = ['COMP 182', 'MATH 355', 'ELEC 220']
+#additional_courses = ['custom1', 'custom2', 'custom3']
+print(algo(course_list, {}))
 
