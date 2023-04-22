@@ -1,42 +1,72 @@
-import React from "react";
+import React, { useState } from "react";
 import {useNavigate, useLocation} from "react-router-dom";
-import WeeklyCalendar from "./calendar.jsx"
+import Calendar from "./calendar.jsx"
+
+function convertToMilitaryTime(timeString) {
+  let timeArray = timeString.split(':');
+  let hours = parseInt(timeArray[0]);
+  let minutes = parseInt(timeArray[1].substring(0, 2));
+  let isPM = timeArray[1].substring(2).toUpperCase() === 'PM';
+  
+  if (isPM && hours !== 12) {
+    hours += 12;
+  } else if (!isPM && hours === 12) {
+    hours = 0;
+  }
+  
+  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:00`;
+}
+
 function Schedules() {
   const navigate = useNavigate();
   const location = useLocation();
   const data = location.state || '';
-  console.log("hello : ", data)
-  const blocks = [
-    "Block 1, 10:00AM W - 11:30AM W",
-    "Block 2, 2:00PM F - 4:00PM F",
-    "Block 3, 9:30AM T - 10:30AM T",
-    // Add more blocks as needed
-  ]
+  const letterToNumberMap = new Map();
+  letterToNumberMap.set('U', '12');
+  letterToNumberMap.set('M', '06');
+  letterToNumberMap.set('T', '07');
+  letterToNumberMap.set('W', '08');
+  letterToNumberMap.set('R', '09');
+  letterToNumberMap.set('F', '10');
+  letterToNumberMap.set('S', '11');
+  
+  const [selectedScheduleIndex, setSelectedScheduleIndex] = useState(0);
+
+  const events = [];
+  Object.entries(data).map(([title, timeBlocks]) => {
+    let schedule = [];
+    timeBlocks.map(([text, times,]) => {
+      times.map(([startTime, endTime, dayOfWeek]) => {
+        const newEvent = {
+          id: parseInt(text),
+          text: text,
+          start: `2023-03-${letterToNumberMap.get(dayOfWeek)}T${convertToMilitaryTime(startTime)}`,
+          end: `2023-03-${letterToNumberMap.get(dayOfWeek)}T${convertToMilitaryTime(endTime)}`,
+        };
+        schedule.push(newEvent);
+      });
+    });
+    events.push(schedule);
+  });
+
   function handleGoBack() {
     navigate(-1);
   }
 
   return (
-  
     <div>
-      <h1>Data:</h1>
-      <ul>
-        {data.map((list, index) => (
-          <li key={index}>
-            <ul>
-              {list.map((item, subIndex) => (
-                <li key={subIndex}>{item}</li>
-              ))}
-            </ul>
-          </li>
-        ))}
-      </ul>
+      <h1>Schedules:</h1>
       <button onClick={handleGoBack}>Go Back</button>
       <div>
-      <WeeklyCalendar blocks={blocks} />
+        <select value={selectedScheduleIndex} onChange={(event) => setSelectedScheduleIndex(parseInt(event.target.value))}>
+          {events.map((schedule, index) => (
+            <option key={index} value={index}>{`Schedule ${index + 1}`}</option>
+          ))}
+        </select>
+        <Calendar key={selectedScheduleIndex} startDate="2023-03-05" events={events[selectedScheduleIndex]}/>
       </div>
     </div>
   );
-  }
+}
 
-export default Schedules
+export default Schedules;
