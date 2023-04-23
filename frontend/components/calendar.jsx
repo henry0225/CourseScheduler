@@ -4,7 +4,6 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-//import { createEventId } from './event-utils';
 
 export default class DemoApp extends React.Component {
   constructor(props) {
@@ -14,7 +13,7 @@ export default class DemoApp extends React.Component {
       currentEvents: [],
       initialEvents: props.events || []
     };
-    console.log(this.props.events)
+    this.colorMap = {};
   }
 
   render() {
@@ -23,66 +22,57 @@ export default class DemoApp extends React.Component {
         <div className="demo-app-main">
           <FullCalendar
             plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-            headerToolbar={false} // changed from an object with header options
+            headerToolbar={false}
             initialView="timeGridWeek"
-            editable={true}
-            selectable={true}
+            editable={false}
+            selectable={false}
             selectMirror={true}
             dayMaxEvents={true}
             weekends={this.state.weekendsVisible}
-            events={this.state.initialEvents}
-            select={this.handleDateSelect}
+            events={this.state.initialEvents.map(event => {
+              // generate a color code based on the event title
+              const colorCode = this.getColorCode(event.title);
+              // set the event color and text color
+              event.color = colorCode;
+              event.textColor = '#000';
+              return event;
+            })}
             eventContent={renderEventContent}
-            eventClick={this.handleEventClick}
-            eventsSet={this.handleEvents}
             initialDate='2023-03-06'
             dayHeaderFormat={{weekday: 'short'}}
             slotMinTime="08:00:00"
             slotMaxTime="21:00:00"
             contentHeight="auto"
+            allDaySlot={false}
           />
         </div>
       </div>
     );
   }
 
-  handleWeekendsToggle = () => {
-    this.setState({
-      weekendsVisible: !this.state.weekendsVisible,
-    });
-  };
-
-  handleDateSelect = (selectInfo) => {
-    let title = prompt('Please enter a new title for your event');
-    let calendarApi = selectInfo.view.calendar;
-
-    calendarApi.unselect(); // clear date selection
-
-    if (title) {
-      calendarApi.addEvent({
-        id: createEventId(),
-        title,
-        start: selectInfo.startStr,
-        end: selectInfo.endStr,
-        allDay: selectInfo.allDay,
-      });
+  getColorCode = (title) => {
+    // check if the title has already been assigned a color
+    if (this.colorMap[title]) {
+      return this.colorMap[title];
     }
-  };
-
-  handleEventClick = (clickInfo) => {
-    if (
-      confirm(
-        `Are you sure you want to delete the event '${clickInfo.event.title}'`
-      )
-    ) {
-      clickInfo.event.remove();
+    // generate a new color for the title
+    const colorCode = this.generateColorCode();
+    // check if the color has already been assigned to another title
+    for (const t in this.colorMap) {
+      if (this.colorMap[t] === colorCode) {
+        return this.getColorCode(title);
+      }
     }
+    // assign the color to the title
+    this.colorMap[title] = colorCode;
+    return colorCode;
   };
 
-  handleEvents = (events) => {
-    this.setState({
-      currentEvents: events,
-    });
+  generateColorCode = () => {
+    // select a random color from the allowed colors
+    const colors = ['#fbf8cc', '#fde4cf', '#ffcfd2', '#f1c0e8', '#cfbaf0', '#a3c4f3', '#90dbf4', '#8eecf5', '#98f5e1', '#b9fbc0'];
+    const colorIndex = Math.floor(Math.random() * colors.length);
+    return colors[colorIndex];
   };
 }
 
