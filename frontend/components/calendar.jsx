@@ -1,74 +1,96 @@
-import React, {Component} from 'react';
-import {DayPilot, DayPilotCalendar, DayPilotNavigator} from "@daypilot/daypilot-lite-react";
-import "./CalendarStyles.css";
-const styles = {
-  wrap: {
-    display: "flex"
-  },
-  left: {
-    marginRight: "10px"
-  },
-  main: {
-    flexGrow: "1"
-  }
-};
+import React from 'react';
+import { formatDate } from '@fullcalendar/core';
+import FullCalendar from '@fullcalendar/react';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import interactionPlugin from '@fullcalendar/interaction';
+//import { createEventId } from './event-utils';
 
-class Calendar extends Component {
-    constructor(props) {
-      super(props);
-      this.calendarRef = React.createRef();
-      this.state = {
-        viewType: "Week",
-        durationBarVisible: true,
-        timeRangeSelectedHandling: "Enabled",
-        onTimeRangeSelected: async args => {
-          const dp = this.calendar;
-          const modal = await DayPilot.Modal.prompt("Create a new event:", "Event 1");
-          dp.clearSelection();
-          if (!modal.result) { return; }
-          dp.events.add({
-            start: args.start,
-            end: args.end,
-            id: DayPilot.guid(),
-            text: modal.result
-          });
-        },
-        eventDeleteHandling: "Update",
-        onEventClick: async args => {
-          const dp = this.calendar;
-          const modal = await DayPilot.Modal.prompt("Update event text:", args.e.text());
-          if (!modal.result) { return; }
-          const e = args.e;
-          e.data.text = modal.result;
-          dp.events.update(e);
-        },
-        headerDateFormat: "dddd", // set the column header to display day names
-      };
-    }
-  
-    get calendar() {
-      return this.calendarRef.current.control;
-    }
-  
-    componentDidMount() {
-      console.log("kekee", this.props.events)
-      const { startDate } = this.props;
-      const events = this.props.events;
-  
-      this.calendar.update({startDate, events});
-    }
-  
-    render() {
-      return (
-        <div style={styles.main}>
-          <DayPilotCalendar
-            {...this.state}
-            ref={this.calendarRef}
+export default class DemoApp extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      weekendsVisible: true,
+      currentEvents: [],
+      initialEvents: props.events || []
+    };
+    console.log(this.props.events)
+  }
+
+  render() {
+    return (
+      <div className="demo-app">
+        <div className="demo-app-main">
+          <FullCalendar
+            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+            headerToolbar={false} // changed from an object with header options
+            initialView="timeGridWeek"
+            editable={true}
+            selectable={true}
+            selectMirror={true}
+            dayMaxEvents={true}
+            weekends={this.state.weekendsVisible}
+            events={this.state.initialEvents}
+            select={this.handleDateSelect}
+            eventContent={renderEventContent}
+            eventClick={this.handleEventClick}
+            eventsSet={this.handleEvents}
+            initialDate='2023-03-06'
+            dayHeaderFormat={{weekday: 'short'}}
+            slotMinTime="08:00:00"
+            slotMaxTime="21:00:00"
+            contentHeight="auto"
           />
         </div>
-      );
-    }
+      </div>
+    );
   }
-  
 
-export default Calendar;
+  handleWeekendsToggle = () => {
+    this.setState({
+      weekendsVisible: !this.state.weekendsVisible,
+    });
+  };
+
+  handleDateSelect = (selectInfo) => {
+    let title = prompt('Please enter a new title for your event');
+    let calendarApi = selectInfo.view.calendar;
+
+    calendarApi.unselect(); // clear date selection
+
+    if (title) {
+      calendarApi.addEvent({
+        id: createEventId(),
+        title,
+        start: selectInfo.startStr,
+        end: selectInfo.endStr,
+        allDay: selectInfo.allDay,
+      });
+    }
+  };
+
+  handleEventClick = (clickInfo) => {
+    if (
+      confirm(
+        `Are you sure you want to delete the event '${clickInfo.event.title}'`
+      )
+    ) {
+      clickInfo.event.remove();
+    }
+  };
+
+  handleEvents = (events) => {
+    this.setState({
+      currentEvents: events,
+    });
+  };
+}
+
+function renderEventContent(eventInfo) {
+  return (
+    <>
+      <b>{eventInfo.timeText}</b>
+      <i>{eventInfo.event.title}</i>
+    </>
+  );
+}

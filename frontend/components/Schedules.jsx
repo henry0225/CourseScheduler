@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import {useNavigate, useLocation} from "react-router-dom";
-import Calendar from "./calendar.jsx"
-
+import DemoApp from "./calendar.jsx"
+import "./CalendarStyles.css"
 function convertToMilitaryTime(timeString) {
   let timeArray = timeString.split(':');
   let hours = parseInt(timeArray[0]);
@@ -39,7 +39,7 @@ function Schedules() {
       times.map(([startTime, endTime, dayOfWeek]) => {
         const newEvent = {
           id: parseInt(text),
-          text: text,
+          title: text,
           start: `2023-03-${letterToNumberMap.get(dayOfWeek)}T${convertToMilitaryTime(startTime)}`,
           end: `2023-03-${letterToNumberMap.get(dayOfWeek)}T${convertToMilitaryTime(endTime)}`,
         };
@@ -48,7 +48,7 @@ function Schedules() {
     });
     events.push(schedule);
   });
-
+  console.log("kek", events)
   function handleGoBack() {
     navigate(-1);
   }
@@ -63,7 +63,7 @@ function Schedules() {
             <option key={index} value={index}>{`Schedule ${index + 1}`}</option>
           ))}
         </select>
-        <Calendar key={selectedScheduleIndex} startDate="2023-03-05" events={events[selectedScheduleIndex]}/>
+        <DemoApp key={selectedScheduleIndex} startDate="2023-03-05" events={events[selectedScheduleIndex]}/>
       </div>
     </div>
   );
