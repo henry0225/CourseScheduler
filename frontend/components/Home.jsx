@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from "react-router-dom";
+
 function Home() {
     const [courseList, setCourseList] = useState('');
     const [result, setResult] = useState('');
