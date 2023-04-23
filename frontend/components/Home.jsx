@@ -1,49 +1,80 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from "react-router-dom";
-function Home() {
-    const [courseList, setCourseList] = useState('');
-    const [result, setResult] = useState('');
-    const navigate = useNavigate();
 
-    
-    function temp(){
-      console.log("result: ", result)
-      navigate("/Schedules", { state: courseList});
-    }
-    const handleSubmit = (event) => {
-      event.preventDefault();
-      const data = { courseList: courseList};
-      
-      fetch('http://127.0.0.1:6969/test', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
+function Home() {
+  const [courseList, setCourseList] = useState('');
+  const [courseArr, setCourseArr] = useState([])
+  const [subjectCode, setSubjectCode] = useState('');
+  const [courseNumber, setCourseNumber] = useState('');
+  const [result, setResult] = useState('');
+  const navigate = useNavigate();
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const data = { courseList: courseList };
+    fetch('http://127.0.0.1:6969/test', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    })
+      .then(response => response.json())
+      .then(data => {
+        setResult(data.result);
+        navigate("/Schedules", { state: data.result });
       })
-        .then(response => response.json())
-        .then(data => {
-          setResult(data.result);
-          navigate("/Schedules", { state: data.result});
-        })
-        .catch(error => console.error(error))
-        console.log("result: ", result)
-        
-    }
-    return (
-      <div>
-        <h1>Rice University Course Scheduler</h1>
+      .catch(error => console.error(error))
+  }
+
+  const handleReset = () => {
+    setCourseList('');
+    setCourseArr([])
+  }
+
+  const handleAddCourse = (event) => {
+    event.preventDefault();
+    const course = `${subjectCode} ${courseNumber}`;
+    if (courseList == [])
+      setCourseList(`${course}`)
+    else
+      setCourseList(`${courseList}` + ',' + `${course}`);
+    setCourseArr([...courseArr, course]);
+    console.log(courseList)
+    setSubjectCode('');
+    setCourseNumber('');
+  }
+
+  return (
+    <div className="parent">
+      <h1 className= "title">Rice University Course Scheduler</h1>
+      <div className="input-container-box">
         <form onSubmit={handleSubmit} style={{ display: 'block' }}>
-          <label style={{ display: 'block' }}>
-            Courses (ex: COMP 140,COMP 182,COMP 215):
-            <input type="text" value={courseList} onChange={(e) => setCourseList(e.target.value)} />
-          </label>
-          
-          <button type="submit">Submit</button>
+            <label style={{ display: 'block' }}>
+              Subject Code: 
+              <input type="text" style={{marginLeft: '10px'}} placeholder="ex: COMP" value={subjectCode} onChange={(e) => setSubjectCode(e.target.value)} />
+            </label>
+            <label style={{ display: 'block' }}>
+              Course Number:
+              <input type="text" style={{marginLeft: '10px'}} placeholder="ex: 140" value={courseNumber} onChange={(e) => setCourseNumber(e.target.value)} />
+            </label>
+            <button type="submit" style={{ background: 'blue', color: 'white', marginRight: '10px' }}>Submit</button>
+            <button type="button" style={{ background: 'grey', color: 'white', marginLeft: '10px', marginRight: '10px' }} onClick={handleAddCourse}>Add Course</button>
+            <button type="button" style={{ background: 'red', color: 'white', marginLeft: '10px' }} onClick={handleReset}>Reset</button>
         </form>
       </div>
-    );
-  }
-  
-  export default Home
-  
+      <div className="course-box">
+        <label style={{ display: 'block' }}>
+          Current courses
+          <ul>
+            {courseArr.map((course, index) => (
+              <li key={index}>{course}</li>
+            ))}
+          </ul>
+        </label>
+      </div>
+    </div>
+  );
+}
+
+export default Home;
