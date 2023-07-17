@@ -23,7 +23,7 @@ function Schedules() {
   const location = useLocation();
   const data = location.state || '';
   const letterToNumberMap = new Map();
-  letterToNumberMap.set('U', '12');
+  letterToNumberMap.set('U', '05');
   letterToNumberMap.set('M', '06');
   letterToNumberMap.set('T', '07');
   letterToNumberMap.set('W', '08');

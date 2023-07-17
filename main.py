@@ -5,6 +5,7 @@ from flask_restful import Resource, Api, reqparse
 from file_parser import openFile
 from flask_cors import CORS
 from algo import algo
+from file_parser import convert_to_164hr
 from collections import defaultdict
 app = Flask(__name__)
 CORS(app)
@@ -18,6 +19,21 @@ def test():
     if request.method == 'POST':
         data = request.get_json()
         course_info = str(data['courseList'])
+        earliest_time = str(data['earliest'])
+        latest_time = str(data['latest'])
+        
+        timeLimits = {}
+        if earliest_time != '' and latest_time != '':
+            timeLimits['TimeConstraints'] = [
+                ['12:00AM', earliest_time, 'M'], [latest_time, '11:59PM', 'M'], 
+                ['12:00AM', earliest_time, 'T'], [latest_time, '11:59PM', 'T'], 
+                ['12:00AM', earliest_time, 'W'], [latest_time, '11:59PM', 'W'], 
+                ['12:00AM', earliest_time, 'R'], [latest_time, '11:59PM', 'R'], 
+                ['12:00AM', earliest_time, 'F'], [latest_time, '11:59PM', 'F'], 
+                ['12:00AM', earliest_time, 'S'], [latest_time, '11:59PM', 'S'], 
+                ['12:00AM', earliest_time, 'U'], [latest_time, '11:59PM', 'U']
+            ]
+        #additional_course_info = {'custom1': [[1, 2], [10,12]], 'custom2': [[2,3]], 'custom3': [[3,4]]}
         # additional_course_keys = str(data['num2'])
         # additional_course_start_times = str(data['num3'])
         # additional_course_end_times = str(data['num4'])
@@ -28,7 +44,7 @@ def test():
         # for i in range(len(additional_course_keys)):
         #     additional_courses[additional_course_keys[i]].append([additional_course_start_times[i], additional_course_end_times[i]])
         courses = course_info.split(',')
-        courses_list = algo(courses, additional_courses={})
+        courses_list = algo(courses, additional_courses=timeLimits)
         result = courses_list
 
         print(result, " result")

@@ -59,7 +59,7 @@ def change_times(arr):
 
 
 def convert_to_164hr(time):
-    times = {'M': 0, 'T': 1440, 'W': 2880, 'R': 4320, 'F': 5760, 'S': 5200, 'U': 8640}
+    times = {'M': 0, 'T': 1440, 'W': 2880, 'R': 4320, 'F': 5760, 'S': 7200, 'U': 8640}
     start = [time[0][0:-5], time[0][-4:-2], time[0][-2:]]
     start_mins = int(start[1])
     start_mins += int(start[0]) * 60
@@ -69,8 +69,12 @@ def convert_to_164hr(time):
     day = time[2]
     if start[2] == "PM" and start[0] != "12":
         start_mins += 720
+    elif start[2] == "AM" and start[0] == "12":
+        start_mins = 0
     if end[2] == "PM" and end[0] != "12":
         end_mins += 720
+    elif end[2] == "AM" and end[0] == "12":
+        end_mins = 0
     print(time, start_mins + times[day], end_mins + times[day])
     return [start_mins + times[day], end_mins + times[day]]
 

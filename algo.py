@@ -1,6 +1,7 @@
 import copy
 import csv
 import ast
+from file_parser import convert_to_164hr
 
 def parse_csv_file(file_path):
     courses = {}
@@ -30,17 +31,26 @@ def parse_csv_file(file_path):
 # Example usage
 courses_info, crn_info, sections_info = parse_csv_file("course_data_164hr.csv")
 original_crn_info = parse_csv_file("course_data_modified.csv")[1]
+#print(original_crn_info)
+#print(sections_info)
 #additional_course_info = {'custom1': [[1, 2], [10,12]], 'custom2': [[2,3]], 'custom3': [[3,4]]}
-#print(courses_info)
+
 def parse_additional_courses(additional_dict):
     for course in additional_dict.keys():
+        converted_time = []
+        for time in additional_dict[course]:
+            converted_time.append(convert_to_164hr(time))
+        #print(converted_time)
         courses_info[course] = [course]
-        crn_info[course] = additional_dict[course]
+        sections_info[course] = course
+        crn_info[course] = converted_time
+        original_crn_info[course] = additional_dict[course]
+        
     pass
-
+#print(crn_info['13530'])
 #parse_additional_courses(additional_course_info)
 #print(courses_info, crn_info)
-
+#print(crn_info)
 def check_compatible(crns):
     times = []
     for crn in crns:
@@ -54,6 +64,7 @@ def check_compatible(crns):
             return False
         
     return True
+
 def generate_combinations(courses):
     course_list = copy.deepcopy(courses)
     if not courses:
@@ -77,16 +88,20 @@ def algo(course_list, additional_courses):
         courses.append(key)
     combinations = generate_combinations(courses)
     res = []
+    #print(combinations)
     for combo in combinations:
          temp_combo = []
          for crn in combo:
-             temp = sections_info[crn] + " CRN: " + crn
-             temp_combo.append((temp, original_crn_info[crn]))
+             if crn != 'TimeConstraints':
+                temp = sections_info[crn] + " CRN: " + crn
+                temp_combo.append((temp, original_crn_info[crn]))
          res.append(temp_combo)
     #print(combinations)
     #return combinations
+    #print(res)
     return res
-course_list = ['COMP 182', 'MATH 355', 'ELEC 220']
+
 #additional_courses = ['custom1', 'custom2', 'custom3']
-print(algo(course_list, {}))
+
+#print( check_compatible(['13530', 'TimeConstraints']))
 
