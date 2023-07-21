@@ -8,12 +8,13 @@ function Home() {
   const [courseNumber, setCourseNumber] = useState('');
   const [earliestTime, setEarliestTime] = useState('');
   const [latestTime, setLatestTime] = useState('');
+  const [customBlock, setCustomBlock] = useState('');
   const [result, setResult] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const data = { courseList: courseList, earliest: earliestTime, latest: latestTime };
+    const data = { courseList: courseList, earliest: earliestTime, latest: latestTime, custom: customBlock };
     fetch('http://127.0.0.1:6969/test', {
       method: 'POST',
       headers: {
@@ -68,6 +69,10 @@ function Home() {
             <label style={{ display: 'block' }}>
              Latest End Time:
               <input type="text" style={{marginLeft: '10px'}} placeholder="ex: 5:00PM" value={latestTime} onChange={(e) => setLatestTime(e.target.value)} />
+            </label>
+            <label style={{ display: 'block' }}>
+             No Classes Between:
+              <input type="text" style={{marginLeft: '10px', width: '170px'}} placeholder="ex: 12:00PM - 1:00PM" value={customBlock} onChange={(e) => setCustomBlock(e.target.value)} />
             </label>
             <button type="submit" style={{ background: 'blue', color: 'white', marginRight: '10px' }}>Submit</button>
             <button type="button" style={{ background: 'grey', color: 'white', marginLeft: '10px', marginRight: '10px' }} onClick={handleAddCourse}>Add Course</button>

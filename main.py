@@ -21,8 +21,22 @@ def test():
         course_info = str(data['courseList'])
         earliest_time = str(data['earliest'])
         latest_time = str(data['latest'])
-        
+        custom_time = str(data['custom'])
+        start_time_str, end_time_str = custom_time.split('-')
+        # Step 2: Remove any leading/trailing whitespaces from the start and end time strings
+        start_time_str = start_time_str.strip()
+        end_time_str = end_time_str.strip()
         timeLimits = {}
+        if custom_time != '':
+            timeLimits['custom'] = [
+                [start_time_str, end_time_str, 'M'],
+                [start_time_str, end_time_str, 'T'],
+                [start_time_str, end_time_str, 'W'],
+                [start_time_str, end_time_str, 'R'],
+                [start_time_str, end_time_str, 'F'],
+                [start_time_str, end_time_str, 'S'],
+                [start_time_str, end_time_str, 'U'],
+            ]
         if earliest_time != '' and latest_time != '':
             timeLimits['TimeConstraints'] = [
                 ['12:00AM', earliest_time, 'M'], [latest_time, '11:59PM', 'M'], 

@@ -92,7 +92,7 @@ def algo(course_list, additional_courses):
     for combo in combinations:
          temp_combo = []
          for crn in combo:
-             if crn != 'TimeConstraints':
+             if crn != 'TimeConstraints' and crn != 'custom':
                 temp = sections_info[crn] + " CRN: " + crn
                 temp_combo.append((temp, original_crn_info[crn]))
          res.append(temp_combo)
